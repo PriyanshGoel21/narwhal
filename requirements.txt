@@ -1,0 +1,5 @@
+certifi
+motor
+beanie
+fastapi
+pydantic
