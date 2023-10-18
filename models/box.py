@@ -23,9 +23,7 @@ class Box(Document):
     company: str
     deck: int
     area: Area
-    zone: int
-    level: int
-    box: int
+    zone: str
     side: Side
     epc: str
     mach_desc: str
