@@ -10,7 +10,7 @@ new_locale = "en_US.UTF-8"
 locale.setlocale(locale.LC_ALL, new_locale)
 
 db_client = MongoClient("mongodb://localhost:27017")
-db = db_client["Product_Management"]
+db = db_client["narwahal_tof"]
 collection = db["products"]
 
 

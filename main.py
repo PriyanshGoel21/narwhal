@@ -8,11 +8,12 @@ from models.box import Box
 app = FastAPI()
 
 client = motor.motor_asyncio.AsyncIOMotorClient(
-    "mongodb+srv://Naad:naad2002@cluster0.7redvzp.mongodb.net/",
-    tlsCAfile=certifi.where(),
+    "mongodb://localhost:27017",
+    # tlsCAfile=certifi.where(),
 )
 
 db = client.narwhal_tof
+
 
 @app.on_event("startup")
 async def start_database():
