@@ -30,3 +30,4 @@ async def update(update_box: UpdateBox = Body(...)):
     if update_box.epc:
         box.epc = update_box.epc
     await box.save()
+

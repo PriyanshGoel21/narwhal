@@ -2,7 +2,6 @@ import certifi
 import motor.motor_asyncio
 from beanie import init_beanie
 from fastapi import FastAPI
-
 import routes.box
 from models.box import Box
 
@@ -14,7 +13,6 @@ client = motor.motor_asyncio.AsyncIOMotorClient(
 )
 
 db = client.narwhal_tof
-
 
 @app.on_event("startup")
 async def start_database():

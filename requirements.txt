@@ -1,5 +1,8 @@
-certifi
-motor
-beanie
-fastapi
-pydantic
+certifi~=2023.7.22
+motor~=3.3.1
+beanie~=1.23.0
+fastapi~=0.103.2
+pydantic~=2.4.2
+paho-mqtt~=1.6.1
+pymongo~=4.5.0
+pytz~=2023.3.post1
