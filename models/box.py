@@ -1,8 +1,8 @@
 from enum import Enum
-from typing import Optional
-
 from beanie import Document
-from pydantic import BaseModel
+
+# from typing import Optional
+# from pydantic import BaseModel
 
 
 # {"SERIALNO": "45383537", "PRODUCT": "9008152", "EPC": "301A94B9E262858002B47F71", "COMPANY": "BWS"}
@@ -19,7 +19,7 @@ class Area(str, Enum):
 
 
 class Box(Document):
-    product_id: int
+    product_id: str
     company: str
     deck: int
     area: Area
@@ -36,13 +36,13 @@ class Box(Document):
     rob: int
 
 
-class UpdateBox(BaseModel):
-    product_id: int
-    company: str
-    deck: int
-    area: Optional[Area]
-    zone: Optional[int]
-    level: Optional[int]
-    box: Optional[int]
-    side: Optional[Side]
-    epc: Optional[str]
+# class UpdateBox(BaseModel):
+#     product_id: int
+#     company: str
+#     deck: int
+#     area: Optional[Area]
+#     zone: Optional[int]
+#     level: Optional[int]
+#     box: Optional[int]
+#     side: Optional[Side]
+#     epc: Optional[str]

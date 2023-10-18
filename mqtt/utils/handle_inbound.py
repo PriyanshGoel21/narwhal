@@ -1,16 +1,24 @@
 from mqtt.utils.extract_info import extract_info
+import requests
+
+url = "http://127.0.0.1:8000/box/upsert"
+
 
 def handle_inbound(data, collection):
     for rfid_item in data["RFID"]:
-        product = rfid_item | extract_info(product_id=f"VS.{rfid_item['COMPANY']}.{rfid_item['PRODUCT']}") | {
-            "Zone": data["Location"],
-            "Box": "B-{}".format(data["Location"].split("-")[2]),
-            "ZONE": int(data["Location"].split("-")[0].replace("Zone", "")),
-            "LEVEL": int(data["Location"].split("-")[1]),
-            "BOX": data["Location"].split("-")[2],
+        product = extract_info(
+            product_id=f"VS.{rfid_item['COMPANY']}.{rfid_item['PRODUCT']}"
+        ) | {
+            "zone": data["Location"],
+            "box": "B-{}".format(data["Location"].split("-")[2]),
         }
+        print(product)
+        response = requests.post(url, json=product)
+        if response.status_code == 200:
+            print("Request successful")
+            print(response.json())
+        else:
+            print(f"Request failed with status code {response.status_code}")
 
-        product_id_filter = {"PRODUCT": f"VS.{rfid_item['COMPANY']}.{rfid_item['PRODUCT']}"}
-        collection.update_one(product_id_filter, {"$set": product}, upsert=True)
     print("Documents Updated/ Inserted")
-    return {'message': "Documents Updated/ Inserted", "topic": "Inbound"}
+    return {"message": "Documents Updated/ Inserted", "topic": "Inbound"}

@@ -12,23 +12,23 @@ def extract_info(product_id):
 
             if product_id == match:
                 matched_item = {
-                    "PRODUCT": product_id,
-                    "MACH_DESC": row["MACH_DESC"],
-                    "MAKER_DESC": row["MAKER_DESC"],
-                    "MATERIAL": row["MATERIAL"],
-                    "MATERIAL_DESC": row["MATERIAL_DESC"],
-                    "PART_NO": row["PART_NO"],
-                    "ROB": row["ROB"],
+                    "product_id": product_id.split(".")[2],
+                    "mach_desc": row["MACH_DESC"],
+                    "maker_desc": row["MAKER_DESC"],
+                    "material": row["MATERIAL"],
+                    "material_desc": row["MATERIAL_DESC"],
+                    "part_no": row["PART_NO"],
+                    "rob": row["ROB"],
                 }
                 return matched_item
 
     matched_item = {
-        "PRODUCT": product_id,
-        "MACH_DESC": "unavailable",
-        "MAKER_DESC": "unavailable",
-        "MATERIAL": "unavailable",
-        "MATERIAL_DESC": "unavailable",
-        "PART_NO": "unavailable",
-        "ROB": "unavailable",
+        "product_id": product_id,
+        "mach_desc": "unavailable",
+        "maker_desc": "unavailable",
+        "material": "unavailable",
+        "material_desc": "unavailable",
+        "part_no": "unavailable",
+        "rob": "unavailable",
     }
     return matched_item

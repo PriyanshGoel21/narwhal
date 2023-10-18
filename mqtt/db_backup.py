@@ -1,6 +1,4 @@
-import json
 import urllib.request
-import pymongo.errors
 from pymongo import MongoClient
 import datetime
 from pytz import timezone
@@ -30,29 +28,18 @@ def connect():
 
 
 def backup_collections():
-    flag = None
-
     for product in collection.find():
         product_id_filter = {
-            # "_id": product["_id"],
             "product_id": product["product_id"],
             "zone": product["zone"],
         }
         collection_products.update_one(
             product_id_filter, {"$set": product}, upsert=True
         )
-        flag = 1
         print("ok")
-        # except pymongo.errors.DuplicateKeyError:
-        #     flag = 0
-        #     pass
 
     timestamp = datetime.datetime.now(timezone("Asia/Kolkata"))
     print(f"Backup completed at {timestamp}")
-
-    # except Exception as e:
-    #     print("Error during Backup")
-    #     print(json.dumps({"ERROR": e}))
 
 
 while True:

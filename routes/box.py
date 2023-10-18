@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Body, Query, HTTPException
-
-from models.box import Box, UpdateBox
+from models.box import Box
 
 router = APIRouter()
 
