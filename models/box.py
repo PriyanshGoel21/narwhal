@@ -1,5 +1,7 @@
 from enum import Enum
 from beanie import Document
+from pydantic import BaseModel
+
 
 # from typing import Optional
 # from pydantic import BaseModel
@@ -23,7 +25,9 @@ class Box(Document):
     company: str
     deck: int
     area: Area
-    zone: str
+    zone: int
+    level: int
+    box: int
     side: Side
     epc: str
     mach_desc: str
@@ -32,3 +36,14 @@ class Box(Document):
     material_desc: str
     part_no: str
     rob: int
+
+
+class UpdateROB(BaseModel):
+    company: str
+    product_id: str
+    rob: int
+
+
+class FetchBoxesFromZone(BaseModel):
+    company: str
+    product_id: str

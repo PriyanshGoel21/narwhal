@@ -9,7 +9,6 @@ app = FastAPI()
 
 client = motor.motor_asyncio.AsyncIOMotorClient(
     "mongodb://localhost:27017",
-    # tlsCAfile=certifi.where(),
 )
 
 db = client.narwhal_tof

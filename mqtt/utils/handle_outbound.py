@@ -9,8 +9,11 @@ def handle_outbound(data, collection):
         product = extract_info(
             product_id=f"VS.{rfid_item['COMPANY']}.{rfid_item['PRODUCT']}"
         ) | {
-            "zone": "Zone0-0-0",
-            "box": "B-{}".format("0"),
+            "deck": data["Deck"],
+            "area": data["Area"],
+            "zone": 0,
+            "level": 0,
+            "box": 0,
         }
         response = requests.post(url, json=product)
         if response.status_code == 200:
