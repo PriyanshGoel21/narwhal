@@ -31,7 +31,7 @@ def backup_collections():
     for product in collection.find():
         product_id_filter = {
             "product_id": product["product_id"],
-            "zone": product["zone"],
+            "company": product["company"],
         }
         collection_products.update_one(
             product_id_filter, {"$set": product}, upsert=True
@@ -47,9 +47,13 @@ while True:
         if connect():
             print("connection established")
             backup_collections()
+            sleep(11)  # successful backups will occur in longer intervals
         else:
             print("no internet connection")
-        sleep(10)
+            sleep(
+                10
+            )  # connection will be checked more frequently in case of no internet connection
+
     except KeyboardInterrupt:
         print("Ended")
         break
