@@ -1,34 +1,23 @@
-import csv
+import motor.motor_asyncio
 
-file_path = "/Users/naad/PycharmProjects/narwhal/mqtt/temp_data/HHDG - SpareInventory.xlsx - HHDG - SpareInventory.csv"
+mongo_client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://localhost:27017")
+db = mongo_client.narwhal_tof
 
 
-def extract_info(product_id):
-    with open(file_path, mode="r") as file:
-        csv_reader = csv.DictReader(file)
+async def extract_info(product_id):
+    collection = db.product_info
+    document = await collection.find_one({"MATERIAL": product_id})
 
-        for row in csv_reader:
-            match = row["MATERIAL"]
+    if document:
+        matched_item = {
+            "mach_desc": document.get("MACH_DESC", "unavailable"),
+            "maker_desc": document.get("MAKER_DESC", "unavailable"),
+            "material": document.get("MATERIAL", "unavailable"),
+            "material_desc": document.get("MATERIAL_DESC", "unavailable"),
+            "part_no": document.get("PART_NO", "unavailable"),
+            "rob": document.get("ROB", "unavailable"),
+        }
+    else:
+        matched_item = {}
 
-            if product_id == match:
-                matched_item = {
-                    "product_id": product_id.split(".")[2],
-                    "mach_desc": row["MACH_DESC"],
-                    "maker_desc": row["MAKER_DESC"],
-                    "material": row["MATERIAL"],
-                    "material_desc": row["MATERIAL_DESC"],
-                    "part_no": row["PART_NO"],
-                    "rob": row["ROB"],
-                }
-                return matched_item
-
-    matched_item = {
-        "product_id": product_id,
-        "mach_desc": "unavailable",
-        "maker_desc": "unavailable",
-        "material": "unavailable",
-        "material_desc": "unavailable",
-        "part_no": "unavailable",
-        "rob": "unavailable",
-    }
     return matched_item
