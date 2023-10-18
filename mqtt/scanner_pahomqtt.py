@@ -3,31 +3,26 @@ import json
 from pymongo import MongoClient
 import sys
 import locale
-import datetime
-from pytz import timezone
 from utils.handle_inbound import handle_inbound
 from utils.handle_outbound import handle_outbound
 
-new_locale = 'en_US.UTF-8'
+new_locale = "en_US.UTF-8"
 locale.setlocale(locale.LC_ALL, new_locale)
 
 db_client = MongoClient("mongodb://localhost:27017")
 db = db_client["Product_Management"]
-messages_collection = db["Messages"]
 collection = db["products"]
 
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print("Connected to MQTT broker\nlistening for info on ...")
-        connected = True
-        client.subscribe('Inbound')
+        client.subscribe("Inbound")
         print("Subscribed to 'Inbound' topic")
-        client.subscribe('Outbound')
+        client.subscribe("Outbound")
         print("Subscribed to 'Outbound' topic")
     else:
         print("Connection failed")
-        connected = False
 
 
 def on_message(client, userdata, message):
@@ -35,35 +30,16 @@ def on_message(client, userdata, message):
     print(message.payload)
     print("UserData: {}".format(userdata))
     print("Client: {}".format(client))
-    time_stamp = datetime.datetime.now(timezone('Asia/Kolkata'))
 
-    try:
-        payload = message.payload.decode("utf-8")
-        data = json.loads(payload)
+    payload = message.payload.decode("utf-8")
+    data = json.loads(payload)
 
-        try:
-            if message.topic == "Inbound":
-                out = handle_inbound(data=data, collection=collection)
-            if message.topic == "Outbound":
-                out = handle_outbound(data=data, collection=collection)
-            else:
-                out = {"message": "No message yet on subscribed topics"}
-            messages_collection.insert_one(
-                {"status": 'successful run without errors', "Timestamp": time_stamp} | out | {"payload": data})
-
-        except Exception as e:
-            print(e)
-            messages_collection.insert_one({
-                "status": 'EXCEPTION / ERROR',
-                "Timestamp": time_stamp,
-                "Error Message": e,
-            })
-    except Exception as e:
-        messages_collection.insert_one({
-            "status": 'EXCEPTION / ERROR',
-            "Timestamp": time_stamp,
-            "Error Message": e,
-        })
+    if message.topic == "Inbound":
+        out = handle_inbound(data=data, collection=collection)
+    if message.topic == "Outbound":
+        out = handle_outbound(data=data, collection=collection)
+    else:
+        out = {"message": "No message yet on subscribed topics"}
 
 
 mqttBroker = "localhost"

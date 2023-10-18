@@ -1,4 +1,4 @@
-from utils.extract_info import extract_info
+from mqtt.utils.extract_info import extract_info
 
 def handle_outbound(data, collection):
     for rfid_item in data["RFID"]:
