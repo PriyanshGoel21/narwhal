@@ -3,11 +3,6 @@ from beanie import Document
 from pydantic import BaseModel
 
 
-# from typing import Optional
-# from pydantic import BaseModel
-
-
-# {"SERIALNO": "45383537", "PRODUCT": "9008152", "EPC": "301A94B9E262858002B47F71", "COMPANY": "BWS"}
 class Side(str, Enum):
     front = "front"
     back = "rear"
@@ -44,6 +39,6 @@ class UpdateROB(BaseModel):
     rob: int
 
 
-class FetchBoxesFromZone(BaseModel):
-    company: str
-    product_id: str
+class MaterialQuantity(BaseModel):
+    material_desc: str
+    quantity: int
