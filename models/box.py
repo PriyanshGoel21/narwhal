@@ -32,15 +32,3 @@ class Box(Document):
     material_desc: str
     part_no: str
     rob: int
-
-
-# class UpdateBox(BaseModel):
-#     product_id: int
-#     company: str
-#     deck: int
-#     area: Optional[Area]
-#     zone: Optional[int]
-#     level: Optional[int]
-#     box: Optional[int]
-#     side: Optional[Side]
-#     epc: Optional[str]
