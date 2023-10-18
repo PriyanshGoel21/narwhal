@@ -26,11 +26,9 @@ async def upsert(box: Box = Body(...)):
         if box.epc:
             existing_box.epc = box.epc
         await existing_box.save()
-    else:
-        new_box = Box(**box.dict())
-        await new_box.save()
+        return box
 
-    return {"message": "Box upserted successfully", "box": box}
+    return await Box(**box.dict()).create()
 
 
 @router.get("/fetch_one")
@@ -38,7 +36,7 @@ async def fetch_one(
     company: str = Query(..., description="Company name"),
     product_id: str = Query(..., description="Product ID"),
 ):
-    box = await Box.find_one(Box.company == company, Box.product_id == product_id)
+    box = await Box.find_one(Box.company == company and Box.product_id == product_id)
 
     if box:
         return {"message": "Box found", "box": box.dict()}
@@ -65,7 +63,7 @@ async def update_rob(
     product_id: str = Query(..., description="Product ID"),
     new_rob: float = Body(..., description="new rob value"),
 ):
-    box = await Box.find_one(Box.company == company, Box.product_id == product_id)
+    box = await Box.find_one(Box.company == company and Box.product_id == product_id)
 
     if box:
         box.rob = new_rob
