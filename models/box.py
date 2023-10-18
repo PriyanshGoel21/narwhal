@@ -28,6 +28,12 @@ class Box(Document):
     box: int
     side: Side
     epc: str
+    mach_desc: str
+    maker_desc: str
+    material: str
+    material_desc: str
+    part_no: str
+    rob: int
 
 
 class UpdateBox(BaseModel):
