@@ -6,9 +6,11 @@ from time import sleep
 import certifi as certifi
 
 # Local Database
-db_client = MongoClient("mongodb://127.0.0.1:27017/")
-db = db_client["narwahal_tof"]
-collection = db["Box"]
+db_client = MongoClient(
+    "mongodb://127.0.0.1:27017/"
+)  # Connect to the local MongoDB server
+db = db_client["narwahal_tof"]  # Select the 'narwahal_tof' database
+collection = db["Box"]  # Select the 'Box' collection within the database
 
 # Deployed Database for Backup
 db_client2 = MongoClient(
@@ -19,6 +21,7 @@ db_console = db_client2["narwahal_tof"]
 collection_products = db_console["Box"]
 
 
+# Define a function to check internet connectivity
 def connect():
     try:
         urllib.request.urlopen("http://google.com/")
@@ -27,6 +30,7 @@ def connect():
         return False
 
 
+# Define a function to backup collections from the local database to the deployed database
 def backup_collections():
     for product in collection.find():
         product_id_filter = {
@@ -36,24 +40,25 @@ def backup_collections():
         collection_products.update_one(
             product_id_filter, {"$set": product}, upsert=True
         )
-        print("ok")
+        print("Backup completed")
 
     timestamp = datetime.datetime.now(timezone("Asia/Kolkata"))
     print(f"Backup completed at {timestamp}")
 
 
+# Continuously attempt to back up collections
 while True:
     try:
         if connect():
-            print("connection established")
+            print("Connection established")
             backup_collections()
-            sleep(11)  # successful backups will occur in longer intervals
+            sleep(11)  # Successful backups will occur at longer intervals
         else:
-            print("no internet connection")
+            print("No internet connection")
             sleep(
                 10
-            )  # connection will be checked more frequently in case of no internet connection
+            )  # Connection will be checked more frequently in case of no internet connection
 
     except KeyboardInterrupt:
         print("Ended")
-        break
+        break  # Exit the loop if a KeyboardInterrupt is received
