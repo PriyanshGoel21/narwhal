@@ -1,9 +1,10 @@
 from mqtt.utils.extract_info import extract_info
 import requests
 
-url = (
-    "http://127.0.0.1:8000/box/upsert"  # Define the URL for making an HTTP POST request
-)
+# url = (
+#     "http://127.0.0.1:8000/box/upsert"  # Define the URL for making an HTTP POST request
+# )
+url = "http://139.59.59.166:8000/box/upsert"  # Define the URL for making an HTTP POST request
 
 
 # Define a function for handling outbound data

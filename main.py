@@ -9,7 +9,10 @@ from models.box import Box
 app = FastAPI()
 
 # Set up an AsyncIOMotorClient for connecting to MongoDB
-client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://localhost:27017")
+# client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://localhost:27017")
+client = motor.motor_asyncio.AsyncIOMotorClient(
+    "mongodb://narwahal:narwahal%40123@139.59.59.166:27017/"
+)
 
 # Access the 'narwhal_tof' database using the client
 db = client.narwhal_tof
