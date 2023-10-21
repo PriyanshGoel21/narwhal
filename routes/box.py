@@ -1,10 +1,12 @@
 from typing import List
+
 from fastapi import (
     APIRouter,
     Body,
     Query,
     HTTPException,
 )
+
 from models.box import (
     Box,
     UpdateROB,
