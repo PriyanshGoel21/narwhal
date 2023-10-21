@@ -1,10 +1,12 @@
 from typing import List
+
 from fastapi import (
     APIRouter,
     Body,
     Query,
     HTTPException,
 )
+
 from models.box import (
     Box,
     UpdateROB,
@@ -63,33 +65,79 @@ async def fetch_one(
         company (str): The company name.
         product_id (str): The product ID.
 
-from models.box import Box, UpdateBox
+    Returns:
+        Box: The fetched Box instance.
 
-router = APIRouter()
+    This function retrieves a Box with a matching company and product_id and returns it.
+    """
+    box = await Box.find_one(Box.company == company and Box.product_id == product_id)
+
+    if box:  # Check if a Box was found
+        return box  # Return the fetched Box
+    else:
+        raise HTTPException(
+            status_code=404, detail="Box not found"
+        )  # Raise a 404 error if no Box is found
 
 
-@router.post("/create")
-async def create(box: Box = Body(...)):
-    return await box.create()
+@router.get(
+    "/fetch_boxes_from_zone"
+)  # Define a route for HTTP GET requests at the endpoint "/fetch_boxes_from_zone"
+async def fetch_boxes_from_zone(
+    deck: int = Query(..., description="Deck"),
+    area: str = Query(..., description="Area"),
+    zone: int = Query(..., description="Zone"),
+) -> List[Box]:
+    """
+    Handle the HTTP GET request to fetch boxes from a specific zone.
+
+    Args:
+        deck (int): The deck number.
+        area (str): The area name.
+        zone (int): The zone number.
+
+    Returns:
+        List[Box]: A list of Box instances in the specified zone.
+
+    This function retrieves a list of Box instances that match the specified deck, area,
+    and zone.
+    """
+    boxes_in_zone = await Box.find(
+        Box.deck == deck and Box.area == area and Box.zone == zone
+    ).to_list()
+
+    if boxes_in_zone:  # Check if any boxes were found in the specified zone
+        return [box for box in boxes_in_zone]  # Return the list of boxes
+    else:
+        raise HTTPException(status_code=404, detail=f"No boxes found in zone '{zone}'")
+        # Raise a 404 error if no boxes are found in the specified zone
 
 
-@router.post("/update")
-async def update(update_box: UpdateBox = Body(...)):
+@router.put(
+    "/update_rob"
+)  # Define a route for HTTP PUT requests at the endpoint "/update_rob"
+async def update_rob(updated_box: UpdateROB = Body(...)) -> Box:
+    """
+    Handle the HTTP PUT request to update the remaining on board (ROB) of a Box.
+
+    Args:
+        updated_box (UpdateROB): The Box instance with updated ROB.
+
+    Returns:
+        Box: The updated Box instance.
+
+    This function updates the ROB of a Box with the values from the provided 'updated_box'.
+    """
     box = await Box.find_one(
-        Box.company == update_box.company and Box.product_id == update_box.product_id
+        Box.company == updated_box.company and Box.product_id == updated_box.product_id
     )
-    if update_box.deck:
-        box.deck = update_box.deck
-    if update_box.area:
-        box.area = update_box.area
-    if update_box.zone:
-        box.zone = update_box.zone
-    if update_box.level:
-        box.level = update_box.level
-    if update_box.box:
-        box.box = update_box.box
-    if update_box.side:
-        box.side = update_box.side
-    if update_box.epc:
-        box.epc = update_box.epc
-    await box.save()
+
+    if box:  # Check if a Box with the same company and product_id exists
+        # Update the ROB of the existing Box with the value from 'updated_box'
+        box.rob = updated_box.rob
+        await box.save()  # Save the updated Box
+        return box  # Return the updated Box
+    else:
+        raise HTTPException(
+            status_code=404, detail="Box not found"
+        )  # Raise a 404 error if no Box is found
