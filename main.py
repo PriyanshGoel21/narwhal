@@ -4,9 +4,20 @@ from fastapi import FastAPI
 import routes.box
 import routes.inventory
 from models.box import Box
+from fastapi.middleware.cors import CORSMiddleware
+
 
 # Create a FastAPI application instance
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Set up an AsyncIOMotorClient for connecting to MongoDB
 # client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://localhost:27017")
