@@ -52,7 +52,7 @@ async def upsert(box: Box = Body(...)):
 
 
 @router.get(
-    "/fetch_one"
+    "/fetch_product"
 )  # Define a route for HTTP GET requests at the endpoint "/fetch_one"
 async def fetch_one(
     company: str = Query(..., description="Company name"),
@@ -78,6 +78,27 @@ async def fetch_one(
         raise HTTPException(
             status_code=404, detail="Box not found"
         )  # Raise a 404 error if no Box is found
+
+
+@router.get("/fetch_products")
+async def fetch_products(
+    deck: int = Query(..., description="Deck"),
+    area: str = Query(..., description="Area"),
+    zone: int = Query(..., description="Zone"),
+    side: str = Query(..., description="Side"),
+    box: int = Query(..., description="Box"),
+) -> list[Box]:
+    products_in_zone = await Box.find(
+        Box.deck == deck
+        and Box.area == area
+        and Box.zone == zone
+        and Box.side == side
+        and Box.box == box
+    ).to_list()
+    if products_in_zone:  # Check if any boxes were found in the specified zone
+        return [product for product in products_in_zone]  # Return the list of boxes
+    else:
+        raise HTTPException(status_code=404, detail=f"No boxes found in zone '{zone}'")
 
 
 @router.get(
