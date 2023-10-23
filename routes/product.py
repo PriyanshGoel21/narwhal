@@ -90,6 +90,7 @@ async def fetch_products(
     area: str = Query(..., description="Area"),
     zone: int = Query(..., description="Zone"),
     side: str = Query(..., description="Side"),
+    level: int = Query(..., description="Level"),
     box: int = Query(..., description="Box"),
 ) -> list[Product]:
     products_in_zone = await Product.find(
@@ -98,6 +99,7 @@ async def fetch_products(
         and Product.zone == zone
         and Product.side == side
         and Product.box == box
+        and Product.level == level
     ).to_list()
     if products_in_zone:  # Check if any boxes were found in the specified zone
         return [product for product in products_in_zone]  # Return the list of boxes
