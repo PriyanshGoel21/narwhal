@@ -19,7 +19,7 @@ class Area(str, Enum):
 
 
 # Define a Beanie Document class for 'Box'
-class Box(Document):
+class Product(Document):
     product_id: str
     company: str
     deck: int
@@ -48,3 +48,12 @@ class UpdateROB(BaseModel):
 class MaterialQuantity(BaseModel):
     material_desc: str
     quantity: int
+
+
+class Box(BaseModel):
+    deck: int
+    area: Area
+    zone: int
+    level: int
+    box: int
+    side: Side

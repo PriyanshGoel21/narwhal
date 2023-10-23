@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from typing import List
 
 from fastapi import (
@@ -7,9 +8,10 @@ from fastapi import (
     HTTPException,
 )
 
-from models.box import (
-    Box,
+from models.product import (
+    Product,
     UpdateROB,
+    Box,
 )
 
 router = APIRouter()  # Create an instance of an APIRouter
@@ -18,37 +20,37 @@ router = APIRouter()  # Create an instance of an APIRouter
 @router.post(
     "/upsert"
 )  # Define a route for HTTP POST requests at the endpoint "/upsert"
-async def upsert(box: Box = Body(...)):
+async def upsert(product: Product = Body(...)):
     """
-    Handle the HTTP POST request to upsert (update or insert) a Box.
+    Handle the HTTP POST request to upsert (update or insert) a product.
 
     Args:
-        box (Box): The Box instance to upsert.
+        product (Product): The Box instance to upsert.
 
     Returns:
-        Box: The updated or inserted Box instance.
+        Product: The updated or inserted Product instance.
 
     This function checks if a Box with the same company and product_id exists. If it
     does, it updates the existing Box; otherwise, it inserts a new Box.
     """
-    existing_box = await Box.find_one(
-        Box.company == box.company and Box.product_id == box.product_id
+    existing_box = await Product.find_one(
+        Product.company == product.company and Product.product_id == product.product_id
     )
 
     if existing_box:  # Check if a Box with the same company and product_id exists
         # Update the existing Box with the values from the provided 'box'
-        existing_box.deck = box.deck
-        existing_box.area = box.area
-        existing_box.zone = box.zone
-        existing_box.level = box.level
-        existing_box.box = box.box
-        existing_box.side = box.side
-        existing_box.epc = box.epc
+        existing_box.deck = product.deck
+        existing_box.area = product.area
+        existing_box.zone = product.zone
+        existing_box.level = product.level
+        existing_box.box = product.box
+        existing_box.side = product.side
+        existing_box.epc = product.epc
         await existing_box.save()  # Save the updated Box
-        return box  # Return the updated Box
+        return product  # Return the updated Box
     else:
         # If no existing Box is found, insert a new Box based on the provided 'box'
-        return await Box(**box.dict()).create()
+        return await Product(**product.dict()).create()
 
 
 @router.get(
@@ -57,7 +59,7 @@ async def upsert(box: Box = Body(...)):
 async def fetch_one(
     company: str = Query(..., description="Company name"),
     product_id: str = Query(..., description="Product ID"),
-) -> Box:
+) -> Product:
     """
     Handle the HTTP GET request to fetch one Box based on company and product_id.
 
@@ -70,13 +72,15 @@ async def fetch_one(
 
     This function retrieves a Box with a matching company and product_id and returns it.
     """
-    box = await Box.find_one(Box.company == company and Box.product_id == product_id)
+    product = await Product.find_one(
+        Product.company == company and Product.product_id == product_id
+    )
 
-    if box:  # Check if a Box was found
-        return box  # Return the fetched Box
+    if product:  # Check if a Box was found
+        return product  # Return the fetched Box
     else:
         raise HTTPException(
-            status_code=404, detail="Box not found"
+            status_code=404, detail="Product not found"
         )  # Raise a 404 error if no Box is found
 
 
@@ -87,22 +91,22 @@ async def fetch_products(
     zone: int = Query(..., description="Zone"),
     side: str = Query(..., description="Side"),
     box: int = Query(..., description="Box"),
-) -> list[Box]:
-    products_in_zone = await Box.find(
-        Box.deck == deck
-        and Box.area == area
-        and Box.zone == zone
-        and Box.side == side
-        and Box.box == box
+) -> list[Product]:
+    products_in_zone = await Product.find(
+        Product.deck == deck
+        and Product.area == area
+        and Product.zone == zone
+        and Product.side == side
+        and Product.box == box
     ).to_list()
     if products_in_zone:  # Check if any boxes were found in the specified zone
         return [product for product in products_in_zone]  # Return the list of boxes
     else:
-        raise HTTPException(status_code=404, detail=f"No boxes found in zone '{zone}'")
+        raise HTTPException(status_code=404, detail=f"No products found")
 
 
 @router.get(
-    "/fetch_boxes_from_zone"
+    "/fetch_boxes"
 )  # Define a route for HTTP GET requests at the endpoint "/fetch_boxes_from_zone"
 async def fetch_boxes_from_zone(
     deck: int = Query(..., description="Deck"),
@@ -123,12 +127,18 @@ async def fetch_boxes_from_zone(
     This function retrieves a list of Box instances that match the specified deck, area,
     and zone.
     """
-    boxes_in_zone = await Box.find(
-        Box.deck == deck and Box.area == area and Box.zone == zone
-    ).to_list()
+    boxes_in_zone = (
+        await Product.find(Box.deck == deck and Box.area == area and Box.zone == zone)
+        .project(Box)
+        .to_list()
+    )
 
     if boxes_in_zone:  # Check if any boxes were found in the specified zone
-        return [box for box in boxes_in_zone]  # Return the list of boxes
+        return list(
+            OrderedDict(
+                ((box.deck, box.area, box.zone, box.box), box) for box in boxes_in_zone
+            ).values()
+        )
     else:
         raise HTTPException(status_code=404, detail=f"No boxes found in zone '{zone}'")
         # Raise a 404 error if no boxes are found in the specified zone
