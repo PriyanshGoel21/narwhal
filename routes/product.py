@@ -130,7 +130,9 @@ async def fetch_boxes_from_zone(
     and zone.
     """
     boxes_in_zone = (
-        await Product.find(Box.deck == deck and Box.area == area and Box.zone == zone)
+        await Product.find(
+            Product.deck == deck and Product.area == area and Product.zone == zone
+        )
         .project(Box)
         .to_list()
     )
