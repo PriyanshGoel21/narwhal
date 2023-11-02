@@ -126,11 +126,10 @@ async def fetch_boxes_from_zone(
             .project(Box)
             .to_list()
         )
-
     if boxes_in_zone:  # Check if any boxes were found in the specified zone
         return list(
             OrderedDict(
-                ((box.deck, box.area, box.zone, box.box, box.side), box) for box in boxes_in_zone
+                ((box.deck, box.area, box.zone, box.box, box.side, box.type), box) for box in boxes_in_zone
             ).values()
         )
     else:
