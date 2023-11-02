@@ -44,6 +44,7 @@ async def upsert(product: Product = Body(...)):
         existing_box.zone = product.zone
         existing_box.level = product.level
         existing_box.box = product.box
+        existing_box.type = product.type
         existing_box.side = product.side
         existing_box.epc = product.epc
         await existing_box.save()  # Save the updated Box
@@ -114,6 +115,7 @@ async def fetch_boxes_from_zone(
     deck: int = Query(..., description="Deck"),
     area: str = Query(..., description="Area"),
     zone: int = Query(..., description="Zone"),
+    side: str = Query(..., description="Side")
 ) -> List[Box]:
     """
     Handle the HTTP GET request to fetch boxes from a specific zone.
@@ -129,18 +131,28 @@ async def fetch_boxes_from_zone(
     This function retrieves a list of Box instances that match the specified deck, area,
     and zone.
     """
-    boxes_in_zone = (
-        await Product.find(
-            Product.deck == deck and Product.area == area and Product.zone == zone
+
+    if side == "both":
+        boxes_in_zone = (
+            await Product.find(
+                Product.deck == deck and Product.area == area and Product.zone == zone
+            )
+            .project(Box)
+            .to_list()
         )
-        .project(Box)
-        .to_list()
-    )
+    else:
+        boxes_in_zone = (
+            await Product.find(
+                Product.deck == deck and Product.area == area and Product.zone == zone and Product.side == side
+            )
+            .project(Box)
+            .to_list()
+        )
 
     if boxes_in_zone:  # Check if any boxes were found in the specified zone
         return list(
             OrderedDict(
-                ((box.deck, box.area, box.zone, box.box), box) for box in boxes_in_zone
+                ((box.deck, box.area, box.zone, box.box, box.side), box) for box in boxes_in_zone
             ).values()
         )
     else:
