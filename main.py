@@ -25,7 +25,7 @@ app.add_middleware(
 
 # Set up an AsyncIOMotorClient for connecting to MongoDB
 # client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://localhost:27017")
-client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://139.59.59.166:27017/")
+client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://root:example2@139.59.59.166:27017/")
 
 # Access the 'narwhal_tof' database using the client
 db = client.narwhal_tof
