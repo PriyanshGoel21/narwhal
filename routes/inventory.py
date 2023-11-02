@@ -1,7 +1,5 @@
 from fastapi import APIRouter, Query, HTTPException
-
 from models.product import Box, MaterialQuantity
-
 router = APIRouter()  # Create an instance of an APIRouter
 
 

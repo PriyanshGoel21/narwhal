@@ -44,6 +44,7 @@ async def upsert(product: Product = Body(...)):
         existing_box.zone = product.zone
         existing_box.level = product.level
         existing_box.box = product.box
+        existing_box.type = product.type
         existing_box.side = product.side
         existing_box.epc = product.epc
         await existing_box.save()  # Save the updated Box

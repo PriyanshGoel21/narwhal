@@ -4,6 +4,11 @@ from beanie import Document
 from pydantic import BaseModel
 
 
+class Type(str, Enum):
+    metal = "metal"
+    cardboard = "cardboard"
+
+
 # Define an enumeration for 'Side'
 class Side(str, Enum):
     front = "front"
@@ -11,6 +16,8 @@ class Side(str, Enum):
 
 
 # Define an enumeration for 'Area'
+
+
 class Area(str, Enum):
     A = "A"
     B = "B"
@@ -28,6 +35,7 @@ class Product(Document):
     level: int
     box: int
     side: Side
+    type: Type
     epc: str
     mach_desc: str
     maker_desc: str
@@ -57,3 +65,4 @@ class Box(BaseModel):
     level: int
     box: int
     side: Side
+    type: Type
