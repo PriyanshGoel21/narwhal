@@ -25,9 +25,7 @@ app.add_middleware(
 
 # Set up an AsyncIOMotorClient for connecting to MongoDB
 # client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://localhost:27017")
-client = motor.motor_asyncio.AsyncIOMotorClient(
-    "mongodb://139.59.59.166:27017/"
-)
+client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://139.59.59.166:27017/")
 
 # Access the 'narwhal_tof' database using the client
 db = client.narwhal_tof
@@ -42,7 +40,7 @@ async def start_database():
 # Define a route at the root endpoint
 @app.get("/")
 def home():
-    return {"Hello, World!"}
+    return {"Hello, World! "}
 
 
 # Include route handlers for the "box" and "inventory" related endpoints
