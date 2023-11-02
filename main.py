@@ -17,7 +17,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -42,7 +42,7 @@ async def start_database():
 # Define a route at the root endpoint
 @app.get("/")
 def home():
-    return {"Hello"}
+    return {"Hello, World!"}
 
 
 # Include route handlers for the "box" and "inventory" related endpoints
