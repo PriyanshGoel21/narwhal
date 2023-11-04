@@ -109,6 +109,8 @@ async def fetch_boxes_from_zone(
     This function retrieves a list of Box instances that match the specified deck, area,
     and zone.
     """
+    if side == "back":
+        side = "rear"
 
     if side == "both":
         boxes_in_zone = (
