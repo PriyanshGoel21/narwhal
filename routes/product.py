@@ -69,6 +69,7 @@ async def search_product(
         search_string: can be -
             product_id (str): The product ID.
             material_desc (str): The Material Description
+            mach_desc (str): The Machine Description
 
     Returns:
         Box: The fetched Box instance.
@@ -111,6 +112,56 @@ async def fetch_products(
     else:
         raise HTTPException(status_code=404, detail=f"No products found")
 
+
+@router.get(
+    "/fetch_boxes"
+)  # Define a route for HTTP GET requests at the endpoint "/fetch_boxes_from_zone"
+async def fetch_boxes_from_zone(
+        deck: int = Query(..., description="Deck"),
+        area: str = Query(..., description="Area"),
+        zone: int = Query(..., description="Zone"),
+        side: str = Query(..., description="Side")
+) -> List[Box]:
+    """
+    Handle the HTTP GET request to fetch boxes from a specific zone.
+    Args:
+        side:
+        deck (int): The deck number.
+        area (str): The area name.
+        zone (int): The zone number.
+    Returns:
+        List[Box]: A list of Box instances in the specified zone.
+    This function retrieves a list of Box instances that match the specified deck, area,
+    and zone.
+    """
+    if side == "back":
+        side = "rear"
+
+    if side == "both":
+        boxes_in_zone = (
+            await Product.find(
+                Product.deck == 1, Product.area == "A", Product.zone == 1
+            )
+            .project(Box)
+            .to_list()
+        )
+    else:
+        boxes_in_zone = (
+            await Product.find(
+                Product.deck == deck, Product.area == area, Product.zone == zone, Product.side == side
+            )
+            .project(Box)
+            .to_list()
+        )
+    if boxes_in_zone:  # Check if any boxes were found in the specified zone
+        return list(
+            OrderedDict(
+                ((box.deck, box.area, box.zone, box.box, box.side, box.type), box) for box in boxes_in_zone
+            ).values()
+        )
+    else:
+        raise HTTPException(status_code=404, detail=f"No boxes found in zone '{zone}'")
+        # Raise a 404 error if no boxes are found in the specified zone
 
 @router.put(
     "/update_rob"
