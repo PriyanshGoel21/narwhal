@@ -57,7 +57,7 @@ async def upsert(product: Product = Body(...)):
 
 
 @router.get(
-    "/fetch_product"
+    "/search_product"
 )  # Define a route for HTTP GET requests at the endpoint "/fetch_one"
 async def search_product(
         search_string: str = Query(..., description="search string - can be product id or material_desc"),
