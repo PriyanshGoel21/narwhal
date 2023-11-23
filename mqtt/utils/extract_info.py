@@ -21,7 +21,7 @@ def extract_info(product_id):
         matched_item = {
             "mach_desc": document.get("MACH_DESC", "unavailable"),
             "maker_desc": document.get("MAKER_DESC", "unavailable"),
-            "material": document.get("MATERIAL", "unavailable"),
+            "material_desc": document.get("MATERIAL", "unavailable"),
             "material_desc": document.get("MATERIAL_DESC", "unavailable"),
             "part_no": document.get("PART_NO", "unavailable"),
             "rob": document.get("ROB", "unavailable"),

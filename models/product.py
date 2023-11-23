@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import List
 
 from beanie import Document
 from pydantic import BaseModel
@@ -16,8 +17,6 @@ class Side(str, Enum):
 
 
 # Define an enumeration for 'Area'
-
-
 class Area(str, Enum):
     A = "A"
     B = "B"
