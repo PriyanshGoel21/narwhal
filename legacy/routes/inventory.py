@@ -1,6 +1,7 @@
-
 from fastapi import APIRouter, Query, HTTPException
-from models.product import Product, MaterialQuantity
+
+from legacy.models.product import MaterialQuantity
+
 router = APIRouter()
 
 
@@ -32,7 +33,7 @@ async def get_quantity(
 ) -> MaterialQuantity:
     """
     Handle the HTTP GET request for calculating the quantity of a specific material_desc.
-    
+
     Args:
         material_desc (str): The description of the material_desc (Part Name).
 

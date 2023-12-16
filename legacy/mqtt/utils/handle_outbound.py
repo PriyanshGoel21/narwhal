@@ -1,5 +1,6 @@
-from mqtt.utils.extract_info import extract_info
 import requests
+
+from legacy.mqtt.utils.extract_info import extract_info
 
 # url = (
 #     "http://127.0.0.1:8000/box/upsert"  # Define the URL for making an HTTP POST request

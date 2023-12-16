@@ -3,11 +3,10 @@ from beanie import init_beanie
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-import routes.inventory
-import routes.product
-import routes.pms
-from models.jobs import Job
-from models.product import Product
+import legacy.routes.inventory
+import legacy.routes.pms
+from legacy.models.jobs import Job
+from legacy.models.product import Product
 
 # Create a FastAPI application instance
 
@@ -48,6 +47,8 @@ def home():
 
 
 # Include route handlers for the "box" and "inventory" related endpoints
-app.include_router(routes.product.router, tags=["products"], prefix="/products")
-app.include_router(routes.inventory.router, tags=["Inventory"], prefix="/inventory")
-app.include_router(routes.pms.router, tags=["PMS"], prefix="/pms")
+app.include_router(legacy.routes.product.router, tags=["products"], prefix="/products")
+app.include_router(
+    legacy.routes.inventory.router, tags=["Inventory"], prefix="/inventory"
+)
+app.include_router(legacy.routes.pms.router, tags=["PMS"], prefix="/pms")

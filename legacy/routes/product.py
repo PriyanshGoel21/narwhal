@@ -1,9 +1,8 @@
 from collections import OrderedDict
 from typing import List
 
-from beanie.odm.operators.find.comparison import Eq
-from beanie.odm.operators.find.logical import Or
 from beanie.odm.operators.find.evaluation import RegEx
+from beanie.odm.operators.find.logical import Or
 from fastapi import (
     APIRouter,
     Body,
@@ -11,11 +10,12 @@ from fastapi import (
     HTTPException,
 )
 
-from models.product import (
+from legacy.models.product import (
     Product,
     UpdateROB,
     Box,
 )
+
 router = APIRouter()  # Create an instance of an APIRouter
 
 
@@ -59,9 +59,10 @@ async def upsert(product: Product = Body(...)):
 @router.get(
     "/search_product"
 )  # Define a route for HTTP GET requests at the endpoint "/fetch_one"
-async def search_product(
-        search_string: str = Query(..., description="search string - can be product id or material_desc"),
-) -> list[Product]:
+async def fetch_one(
+    company: str = Query(..., description="Company name"),
+    product_id: str = Query(..., description="Product ID"),
+) -> Product:
     """
     Handle the HTTP GET request to fetch one Box based on company and product_id.
 
@@ -77,7 +78,13 @@ async def search_product(
     This function retrieves a Box with a matching company and product_id and returns it.
     """
 
-    product = await Product.find(Or(RegEx(Product.product_id, search_string, "i"), RegEx(Product.material_desc, search_string, "i"), RegEx(Product.mach_desc, search_string, "i"))).to_list()
+    product = await Product.find(
+        Or(
+            RegEx(Product.product_id, search_string, "i"),
+            RegEx(Product.material_desc, search_string, "i"),
+            RegEx(Product.mach_desc, search_string, "i"),
+        )
+    ).to_list()
     if product:  # Check if a Box was found
         try:
             return product[:10]  # Return the fetched Box
@@ -91,20 +98,20 @@ async def search_product(
 
 @router.get("/fetch_products")
 async def fetch_products(
-        deck: int = Query(..., description="Deck"),
-        area: str = Query(..., description="Area"),
-        zone: int = Query(..., description="Zone"),
-        level: int = Query(..., description="Level"),
-        box: int = Query(..., description="Box"),
-        side: str = Query(..., description="Side"),
+    deck: int = Query(..., description="Deck"),
+    area: str = Query(..., description="Area"),
+    zone: int = Query(..., description="Zone"),
+    level: int = Query(..., description="Level"),
+    box: int = Query(..., description="Box"),
+    side: str = Query(..., description="Side"),
 ) -> list[Product]:
     products_in_zone = await Product.find(
-        (Product.deck == deck)
-        , (Product.area == area)
-        , (Product.zone == zone)
-        , (Product.level == level)
-        , (Product.box == box)
-        , (Product.side == side)
+        (Product.deck == deck),
+        (Product.area == area),
+        (Product.zone == zone),
+        (Product.level == level),
+        (Product.box == box),
+        (Product.side == side),
     ).to_list()
 
     if products_in_zone:  # Check if any boxes were found in the specified zone
@@ -117,10 +124,10 @@ async def fetch_products(
     "/fetch_boxes"
 )  # Define a route for HTTP GET requests at the endpoint "/fetch_boxes_from_zone"
 async def fetch_boxes_from_zone(
-        deck: int = Query(..., description="Deck"),
-        area: str = Query(..., description="Area"),
-        zone: int = Query(..., description="Zone"),
-        side: str = Query(..., description="Side")
+    deck: int = Query(..., description="Deck"),
+    area: str = Query(..., description="Area"),
+    zone: int = Query(..., description="Zone"),
+    side: str = Query(..., description="Side"),
 ) -> List[Box]:
     """
     Handle the HTTP GET request to fetch boxes from a specific zone.
@@ -148,7 +155,10 @@ async def fetch_boxes_from_zone(
     else:
         boxes_in_zone = (
             await Product.find(
-                Product.deck == deck, Product.area == area, Product.zone == zone, Product.side == side
+                Product.deck == deck,
+                Product.area == area,
+                Product.zone == zone,
+                Product.side == side,
             )
             .project(Box)
             .to_list()
@@ -156,12 +166,38 @@ async def fetch_boxes_from_zone(
     if boxes_in_zone:  # Check if any boxes were found in the specified zone
         return list(
             OrderedDict(
-                ((box.deck, box.area, box.zone, box.box, box.side, box.type), box) for box in boxes_in_zone
+                ((box.deck, box.area, box.zone, box.box, box.side, box.type), box)
+                for box in boxes_in_zone
             ).values()
         )
     else:
         raise HTTPException(status_code=404, detail=f"No boxes found in zone '{zone}'")
         # Raise a 404 error if no boxes are found in the specified zone
+
+
+@router.get("/fetch_products")
+async def fetch_products(
+    deck: int = Query(..., description="Deck"),
+    area: str = Query(..., description="Area"),
+    zone: int = Query(..., description="Zone"),
+    level: int = Query(..., description="Level"),
+    box: int = Query(..., description="Box"),
+    side: str = Query(..., description="Side"),
+) -> list[Product]:
+    products_in_zone = await Product.find(
+        (Product.deck == deck),
+        (Product.area == area),
+        (Product.zone == zone),
+        (Product.level == level),
+        (Product.box == box),
+        (Product.side == side),
+    ).to_list()
+
+    if products_in_zone:  # Check if any boxes were found in the specified zone
+        return [product for product in products_in_zone]  # Return the list of boxes
+    else:
+        raise HTTPException(status_code=404, detail=f"No products found")
+
 
 @router.put(
     "/update_rob"
