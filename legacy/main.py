@@ -1,6 +1,5 @@
 import motor.motor_asyncio
 from beanie import init_beanie
-from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import legacy.routes.inventory
@@ -10,7 +9,7 @@ from legacy.models.product import Product
 
 # Create a FastAPI application instance
 
-app = FastAPI()
+# app = FastAPI()
 
 origins = [
     "http://localhost:3000",
