@@ -23,7 +23,7 @@ async def get_all_jobs() -> List[Job]:
 
 
 @router.get("/jobs/{pms_code}")
-async def get_products_from_job(pms_code: str) -> list[Link[Product]] | None:
+async def get_products_from_job(pms_code: str):
     try:
         job = await Job.find_one(Job.pms_code == pms_code, fetch_links=True)
         return job.products
@@ -45,3 +45,4 @@ async def change_status(pms_code: str, status: Status = Query(None, title="Statu
         return await job.save()
     except:
         raise HTTPException(status_code=404, detail="Job not found")
+
