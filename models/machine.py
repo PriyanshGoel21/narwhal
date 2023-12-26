@@ -1,7 +1,5 @@
 from typing import List
-
 from beanie import Document, Link
-
 from models.box import Box
 from models.jobs import Job
 

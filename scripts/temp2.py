@@ -5,23 +5,22 @@ import os
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from models.product import Product
+from models.product import Product2
 
 
 async def main():
-    # Beanie uses Motor async client under the hood
     client = AsyncIOMotorClient(os.environ.get("DATABASE_URL"))
 
-    await init_beanie(database=client.narwhal, document_models=[Product])
+    await init_beanie(database=client.test, document_models=[Product2])
 
     with open("products.csv", mode="r", encoding="utf8") as csv_file:
         csv_reader = csv.DictReader(csv_file)
-        line_count = 0
         for row in csv_reader:
             print(row["MATERIAL"])
-            product = await Product.find_one(Product.material_code == row["MATERIAL"])
+            product = await Product2.find_one(Product2.material_code == row["MATERIAL"])
             if product is None:
-                product = Product(
+                product = Product2(
+                    machine=row["MACH_DESC"],
                     material_code=row["MATERIAL"],
                     material_desc=row["MATERIAL_DESC"],
                     part_no=row["PART_NO"],

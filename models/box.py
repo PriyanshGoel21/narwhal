@@ -1,9 +1,7 @@
 from enum import Enum
 from typing import Optional, List
-
 from beanie import Document, BackLink, Link
 from pydantic import Field
-
 from models.machine import Machine
 from models.product import Product
 
