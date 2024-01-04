@@ -1,7 +1,7 @@
 from typing import List
 
 from beanie import WriteRules
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body, HTTPException, Query
 
 from models.box import Box, CreateBox
 from models.product import Product
@@ -40,9 +40,39 @@ async def add_products(box_id: str, products: List[Product]) -> Box:
     return exists
 
 
-@router.post("/get_products")
+@router.get("/get_products")
 async def get_products(box_id: str) -> Box:
     exists = await Box.get(box_id, fetch_links=True)
     if not exists:
         raise HTTPException(status_code=404, detail="Box not found")
     return exists
+
+
+@router.get("/fetch_boxes")
+async def fetch_boxes_from_zone(
+    deck: int = Query(..., description="Deck"),
+    area: str = Query(..., description="Area"),
+    zone: int = Query(..., description="Zone"),
+    side: str = Query(..., description="Side"),
+) -> List[Box]:
+    if side == "back":
+        side = "rear"
+    if side == "both":
+        boxes = await Box.find(
+            Box.deck == deck, Box.area == area, Box.zone == zone
+        ).to_list()
+    else:
+        boxes = await Box.find(
+            Box.deck == deck, Box.area == area, Box.zone == zone, Box.side == side
+        ).to_list()
+    return boxes
+
+
+@router.put("/update_rob")
+async def update_rob(product_id: str, new_rob: int) -> Product:
+    exists = await Product.get(product_id)
+    if exists:
+        exists.rob = new_rob
+        await exists.save()
+        return exists
+    raise HTTPException(status_code=404, detail="Product not found")
