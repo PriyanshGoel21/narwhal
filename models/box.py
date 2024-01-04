@@ -1,8 +1,9 @@
 from enum import Enum
 from typing import Optional, List
-from beanie import Document, BackLink, Link
-from pydantic import Field
-from models.machine import Machine
+
+from beanie import Document, Link
+from pydantic import BaseModel
+
 from models.product import Product
 
 
@@ -26,10 +27,21 @@ class Area(str, Enum):
 
 
 class Box(Document):
+    deck: int
     area: Area
     zone: int
     level: int
     side: Side
     type: Type
-    machine: BackLink[Machine] = Field(original_field="boxes")
+    machine_name: str
     products: Optional[List[Link[Product]]]
+
+
+class CreateBox(BaseModel):
+    deck: int
+    area: Area
+    zone: int
+    level: int
+    side: Side
+    type: Type
+    machine_name: str
