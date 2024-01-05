@@ -1,14 +1,10 @@
-import time
-
-import requests
 import json
 import random
 
-url = 'http://139.59.59.166/products/upsert'
-headers = {
-    'accept': 'application/json',
-    'Content-Type': 'application/json'
-}
+import requests
+
+url = "http://139.59.59.166/products/upsert"
+headers = {"accept": "application/json", "Content-Type": "application/json"}
 
 decks = [deck for deck in range(1, 4)]
 areas = ["A", "B", "C"]
@@ -19,7 +15,24 @@ sides = ["front", "rear"]
 types = ["metal", "cardboard"]
 mach_desc = list()
 maker_desc = list()
-company = ["CAS", "BWS", "SGS", "FOS", "LOS", "SHS", "WOS", "MES", "GES", "ACR", "FWS", "STS", "HMC", "AUS", "NAS", "POE"]
+company = [
+    "CAS",
+    "BWS",
+    "SGS",
+    "FOS",
+    "LOS",
+    "SHS",
+    "WOS",
+    "MES",
+    "GES",
+    "ACR",
+    "FWS",
+    "STS",
+    "HMC",
+    "AUS",
+    "NAS",
+    "POE",
+]
 material_desc = list()
 
 with open("mach_desc", "r") as file:
@@ -28,7 +41,8 @@ with open("mach_desc", "r") as file:
 for mach in mach_desc:
     if mach == " ":
         mach_desc.remove(mach)
-    else: mach = mach[-2]
+    else:
+        mach = mach[-2]
 
 with open("maker_desc", "r") as file:
     maker_desc = file.read().split("\n")
@@ -36,7 +50,8 @@ with open("maker_desc", "r") as file:
 for mach in maker_desc:
     if mach == " ":
         maker_desc.remove(mach)
-    else: mach = mach[-2]
+    else:
+        mach = mach[-2]
 
 with open("material_desc", "r", encoding="utf-8") as file:
     for line_number, line in enumerate(file, start=1):
@@ -48,7 +63,9 @@ with open("material_desc", "r", encoding="utf-8") as file:
 for mach in material_desc:
     if mach == " ":
         material_desc.remove(mach)
-    else: mach = mach[-2]
+    else:
+        mach = mach[-2]
+
 
 def populate_db():
     product_id = 0
@@ -76,13 +93,16 @@ def populate_db():
                                     "material_desc": f"VS.{com}.{product_id}",
                                     "material_desc": random.choice(material_desc)[:-2],
                                     "part_no": str(product_id),
-                                    "rob": random.randint(1, 10)
+                                    "rob": random.randint(1, 10),
                                 }
 
-                                response = requests.post(url, headers=headers, data=json.dumps(data))
+                                response = requests.post(
+                                    url, headers=headers, data=json.dumps(data)
+                                )
 
                                 print(response.json())
                                 product_id += 1
+
 
 populate_db()
 
