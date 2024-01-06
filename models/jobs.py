@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Union, Any
 from beanie import Document, Link
 from models.product import Product
 from enum import Enum
@@ -25,7 +25,7 @@ class CompletionStatus(str, Enum):
 class Job(Document):
     pms_code: str
     pms_desc: str
-    due_date: Optional[datetime.date]
+    due_date: str | Any
     status: Status
     products: Optional[List[Link[Product]]]
     type: Type

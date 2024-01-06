@@ -14,9 +14,17 @@ db = client.narwhal
 
 
 async def update_box_status():
-    await init_beanie(database=db, document_models=[Box])
+    await init_beanie(database=db, document_models=[Job])
 
-    await Box.update_all({}, {"$set": {"type": today}}, upsert=True)
+    # all_entries = await Job.find().to_list()
+    #
+    # for entry in all_entries:
+    #     entry.due_date = date.today()
+    #
+    # await Job.replace_many(all_entries)
+    # # print(all_entries)
+    #
+    await Job.update_all({}, {"$set": {"due_date": today}}, upsert=True)
     print("ok")
 
 
@@ -85,9 +93,9 @@ async def update_field_name():
     print("Field name updated")
 
 
-# asyncio.run(update_jobs_type())
+asyncio.run(update_box_status())
 # asyncio.run(add_shelves_and_racks())
 # asyncio.run(update_pms_type())
-asyncio.run(update_field_name())
+# asyncio.run(update_field_name())
 
 

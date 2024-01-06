@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from beanie import Link
 from fastapi import APIRouter, Query, HTTPException
 from typing import List
@@ -38,36 +38,36 @@ async def get_jobs_due(type: Type = Query(None, title="Time Range", description=
 
 @router.put("/jobs/{pms_code}/change_status")
 async def change_status(pms_code: str, status: Status = Query(None, title="Status", description="Change Status")):
-    try:
-        job = await Job.find_one(Job.pms_code == pms_code, fetch_links=True)
-
-        time_period = {Type.daily: 1, Type.weekly: 7, Type.monthly: 30}
-
-        if status == Status.in_progress:
-            today = date.today()
-            job.due_date = today + timedelta(days=time_period.get(job.type))
-        elif status == Status.completed:
-            today = date.today()
-
-            delta = job.due_date - today
-            completion_status = (CompletionStatus.on_time if delta.days >= 0 else CompletionStatus.late)
-
-            completed_job = CompletedJob(
-                pms_code=job.pms_code,
-                pms_desc=job.pms_desc,
-                due_date=job.due_date,
-                products=job.products,
-                type=job.type,
-                completion_status=completion_status
-            )
-            await completed_job.save()
-
-            job.status = Status.planning
-        return await job.save()
-
-
-    except:
+    job = await Job.find_one(Job.pms_code == pms_code, fetch_links=True)
+    if job is None:
         raise HTTPException(status_code=404, detail="Job not found")
+
+    time_period = {Type.daily: 1, Type.weekly: 7, Type.monthly: 30}
+
+    if status == Status.in_progress:
+        today = date.today()
+        job_due_date = datetime.fromisoformat(job.due_date.isoformat()).date()
+        job.due_date = job_due_date + timedelta(days=time_period.get(job.type))
+    elif status == Status.completed:
+        today = date.today()
+
+        job_due_date = datetime.fromisoformat(job.due_date.isoformat()).date()
+        delta = job_due_date - today
+        completion_status = (CompletionStatus.on_time if delta.days >= 0 else CompletionStatus.late)
+
+        completed_job = CompletedJob(
+            pms_code=job.pms_code,
+            pms_desc=job.pms_desc,
+            due_date=job_due_date,
+            products=job.products,
+            type=job.type,
+            completion_status=completion_status
+        )
+        await completed_job.save()
+
+        job.status = Status.planning
+
+    return await job.save()
 
 
 @router.get("jobs/{pms_code}/drawings")
