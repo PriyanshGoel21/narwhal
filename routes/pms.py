@@ -32,8 +32,8 @@ async def get_products_from_job(pms_code: str):
 
 
 @router.get("jobs/filtered/due")
-async def get_jobs_due():
-    pass
+async def get_jobs_due(type: Type = Query(None, title="Time Range", description="Time Range")):
+    return await Job.find(Job.type == type).to_list()
 
 
 @router.put("/jobs/{pms_code}/change_status")
