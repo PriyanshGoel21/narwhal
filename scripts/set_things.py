@@ -1,8 +1,10 @@
 import os
 import asyncio
+import random
+
 import motor.motor_asyncio
 from beanie import init_beanie
-from models.box import Box, Area
+from models.box import Box, Room
 from datetime import date
 
 
@@ -36,6 +38,31 @@ async def update_boxes():
     print("ok")
 
 
+async def add_shelves_and_racks():
+    await init_beanie(database=db, document_models=[Box])
+
+    all_entries = await Box.find().to_list()
+
+    num_shelves = 6
+    num_racks = 6
+
+    shelves = list(range(1, num_shelves + 1))
+
+    for rack_number in range(1, num_racks + 1):
+        random.shuffle(shelves)
+        for shelf_number in range(1, num_shelves + 1):
+            entry = next((entry for entry in all_entries if entry.rack == rack_number and entry.shelf is None), None)
+            if entry:
+                entry.shelf = shelves.pop()
+
+async def update_field_name():
+    await init_beanie(database=db, document_models=[Box])
+
+    await Box.update_all({}, {"$rename": {"zone": "rack"}})
+    await Box.update_all({}, {"$rename": {"level": "shelf"}})
+
+    print("Field name updated")
+
+
 # asyncio.run(update_jobs_status())
-asyncio.run(update_boxes())
-# x = await update_boxes()
+asyncio.run(add_shelves_and_racks())

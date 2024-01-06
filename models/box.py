@@ -14,7 +14,7 @@ class Side(str, Enum):
 
 
 # Define an enumeration for 'Area'
-class Area(str, Enum):
+class Room(str, Enum):
     MAIN_INVENTORY = "Main Inventory"
     PURIFIER = "Purifier"
     ENGINE_CONTROL = "Engine Control Room"
@@ -22,9 +22,9 @@ class Area(str, Enum):
 
 class Box(Document):
     deck: int
-    area: Area
-    zone: int
-    level: int
+    room: Room
+    rack: int
+    shelf: int
     side: Side
     machine_name: str
     products: Optional[List[Link[Product]]]
@@ -32,8 +32,8 @@ class Box(Document):
 
 class CreateBox(BaseModel):
     deck: int
-    area: Area
-    zone: int
-    level: int
+    room: Room
+    rack: int
+    shelf: int
     side: Side
     machine_name: str
