@@ -7,12 +7,6 @@ from pydantic import BaseModel
 from models.product import Product
 
 
-# Define an enumeration for 'Side'
-class Side(str, Enum):
-    front = "front"
-    back = "rear"
-
-
 # Define an enumeration for 'Area'
 class Room(str, Enum):
     MAIN_INVENTORY = "Main Inventory"
@@ -25,7 +19,6 @@ class Box(Document):
     room: Room
     rack: int
     shelf: int
-    side: Side
     machine_name: str
     products: Optional[List[Link[Product]]]
 
@@ -35,5 +28,4 @@ class CreateBox(BaseModel):
     room: Room
     rack: int
     shelf: int
-    side: Side
     machine_name: str

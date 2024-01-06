@@ -17,14 +17,12 @@ async def create_box(box: CreateBox = Body(...)) -> Box:
     if exists:
         raise HTTPException(status_code=403, detail="Box already exists")
     box = Box(
-        level=box.level,
-        side=box.side,
-        type=box.type,
-        zone=box.zone,
-        area=box.area,
-        machine_name=box.machine_name,
         deck=box.deck,
+        room=box.room,
+        machine_name=box.machine_name,
         products=[],
+        shelf=box.shelf,
+        rack=box.rack,
     )
     box = await box.insert()
     return box
@@ -53,20 +51,13 @@ async def get_products(box_id: str) -> Box:
 @router.get("/fetch_boxes")
 async def fetch_boxes_from_zone(
     deck: int = Query(..., description="Deck"),
-    area: str = Query(..., description="Area"),
-    zone: int = Query(..., description="Zone"),
-    side: str = Query(..., description="Side"),
+    rack: int = Query(..., description="Rack"),
+    shelf: int = Query(..., description="Shelf"),
+    room: str = Query(..., description="Room"),
 ) -> List[Box]:
-    if side == "back":
-        side = "rear"
-    if side == "both":
-        boxes = await Box.find(
-            Box.deck == deck, Box.area == area, Box.zone == zone
-        ).to_list()
-    else:
-        boxes = await Box.find(
-            Box.deck == deck, Box.area == area, Box.zone == zone, Box.side == side
-        ).to_list()
+    boxes = await Box.find(
+        Box.deck == deck, Box.rack == rack, Box.shelf == shelf, Box.room == room
+    ).to_list()
     return boxes
 
 
