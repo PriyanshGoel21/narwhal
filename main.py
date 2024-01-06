@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 from models.box import Box
-from models.jobs import Job
+from models.jobs import Job, CompletedJob
 from models.product import Product
 from routes.inventory import router as inventory_router
 from routes.pms import router as pms_router
@@ -28,7 +28,7 @@ db = client.narwhal
 
 @app.on_event("startup")
 async def start_database():
-    await init_beanie(database=db, document_models=[Job, Product, Box, CompletedJobs])
+    await init_beanie(database=db, document_models=[Job, Product, Box, CompletedJob])
 
 
 @app.get("/")
