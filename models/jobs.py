@@ -16,6 +16,11 @@ class Type(str, Enum):
     monthly = "monthly"
 
 
+class CompletionStatus(str, Enum):
+    on_time = "on_time"
+    late = "late"
+
+
 class Job(Document):
     pms_code: str
     pms_desc: str
@@ -26,10 +31,11 @@ class Job(Document):
     type: Type
 
 
-class CompletedJobs(Document):
+class CompletedJob(Document):
     pms_code: str
     pms_desc: str
     due_date: str
     completed_date: Optional[str]
     products: Optional[List[Link[Product]]]
     type: Type
+    completion_status: CompletionStatus

@@ -23,7 +23,7 @@ async def update_box_status():
 async def update_jobs_type():
     await init_beanie(database=db, document_models=[Job])
 
-    await Job.update_all({}, {"$set": {"completed_date": ""}})
+    await Job.update_all({}, {"$set": {"completed_date": today}})
 
 
 async def update_pms_type():
