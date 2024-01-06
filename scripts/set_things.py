@@ -43,17 +43,16 @@ async def add_shelves_and_racks():
 
     all_entries = await Box.find().to_list()
 
-    num_shelves = 6
-    num_racks = 6
+    r = len(all_entries) // 36
+    s = r // 6
 
-    shelves = list(range(1, num_shelves + 1))
+    for i, entry in enumerate(all_entries):
+        entry.rack = (i % r) // s + 1
+        entry.shelf = (i % s) + 1
 
-    for rack_number in range(1, num_racks + 1):
-        random.shuffle(shelves)
-        for shelf_number in range(1, num_shelves + 1):
-            entry = next((entry for entry in all_entries if entry.rack == rack_number and entry.shelf is None), None)
-            if entry:
-                entry.shelf = shelves.pop()
+    await Box.replace_many(all_entries)
+    print("Shelves and racks added/updated")
+
 
 async def update_field_name():
     await init_beanie(database=db, document_models=[Box])
