@@ -25,7 +25,7 @@ class CompletionStatus(str, Enum):
 class Job(Document):
     pms_code: str
     pms_desc: str
-    due_date: Optional[datetime.datetime]
+    due_date: Optional[datetime.date]
     status: Status
     products: Optional[List[Link[Product]]]
     type: Type
