@@ -1,12 +1,10 @@
 import os
-
 import motor.motor_asyncio
 import uvicorn
 from beanie import init_beanie
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
-
 from models.box import Box
 from models.jobs import Job
 from models.product import Product
@@ -30,7 +28,7 @@ db = client.narwhal
 
 @app.on_event("startup")
 async def start_database():
-    await init_beanie(database=db, document_models=[Job, Product, Box])
+    await init_beanie(database=db, document_models=[Job, Product, Box, CompletedJobs])
 
 
 @app.get("/")

@@ -10,10 +10,26 @@ class Status(str, Enum):
     planning = "planning"
 
 
+class Type(str, Enum):
+    daily = "daily"
+    weekly = "weekly"
+    monthly = "monthly"
+
+
 class Job(Document):
     pms_code: str
     pms_desc: str
     due_date: str
+    completed_date: Optional[str]
     status: Status
     products: Optional[List[Link[Product]]]
+    type: Type
 
+
+class CompletedJobs(Document):
+    pms_code: str
+    pms_desc: str
+    due_date: str
+    completed_date: Optional[str]
+    products: Optional[List[Link[Product]]]
+    type: Type

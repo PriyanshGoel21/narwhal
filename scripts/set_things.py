@@ -1,10 +1,10 @@
 import os
 import asyncio
 import random
-
 import motor.motor_asyncio
 from beanie import init_beanie
 from models.box import Box, Room
+from models.jobs import Type, Job
 from datetime import date
 
 
@@ -13,11 +13,31 @@ today = date.today()
 db = client.narwhal
 
 
-async def update_jobs_status():
+async def update_box_status():
     await init_beanie(database=db, document_models=[Box])
 
-    await Box.update_all({}, {"$set": {"room": ""}})
+    await Box.update_all({}, {"$set": {"type": today}}, upsert=True)
     print("ok")
+
+
+async def update_jobs_type():
+    await init_beanie(database=db, document_models=[Job])
+
+    await Job.update_all({}, {"$set": {"completed_date": ""}})
+
+
+async def update_pms_type():
+    await init_beanie(database=db, document_models=[Box])
+
+    all_entries = await Job.find().to_list()
+
+    types = [Type.daily, Type.monthly, Type.weekly]
+
+    for entry in all_entries:
+        entry.type = random.choice(types)
+
+    await Box.replace_many(all_entries)
+    print("Type added/updated for Boxes")
 
 
 async def update_boxes():
@@ -55,13 +75,19 @@ async def add_shelves_and_racks():
 
 
 async def update_field_name():
-    await init_beanie(database=db, document_models=[Box])
+    # await init_beanie(database=db, document_models=[Box])
+    await init_beanie(database=db, document_models=[Job])
 
-    await Box.update_all({}, {"$rename": {"zone": "rack"}})
-    await Box.update_all({}, {"$rename": {"level": "shelf"}})
+    # await Box.update_all({}, {"$rename": {"zone": "rack"}})
+    # await Box.update_all({}, {"$rename": {"level": "shelf"}})
+    await Job.update_all({}, {"$rename": {"completed_date": "completion_date"}})
 
     print("Field name updated")
 
 
-# asyncio.run(update_jobs_status())
-asyncio.run(add_shelves_and_racks())
+# asyncio.run(update_jobs_type())
+# asyncio.run(add_shelves_and_racks())
+# asyncio.run(update_pms_type())
+asyncio.run(update_field_name())
+
+

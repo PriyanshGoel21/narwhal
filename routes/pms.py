@@ -17,7 +17,7 @@ async def get_jobs(status: Status = Query(None, title="Status", description="Get
     return jobs
 
 
-@router.get("/jobs/all")
+@router.get("/jobs/filtered/all")
 async def get_all_jobs() -> List[Job]:
     return await Job.find_all().to_list()
 
@@ -31,11 +31,15 @@ async def get_products_from_job(pms_code: str):
         raise HTTPException(status_code=404, detail="Job not found")
 
 
+@router.get("jobs/filtered/due")
+async def get_jobs_due():
+    pass
+
+
 @router.put("/jobs/{pms_code}/change_status")
 async def change_status(pms_code: str, status: Status = Query(None, title="Status", description="Change Status")):
     try:
         job = await Job.find_one(Job.pms_code == pms_code, fetch_links=True)
-
         if job.status != status:
             job.status = status
             if status == status.in_progress:
@@ -64,3 +68,4 @@ async def get_drawings(pms_code: str):
 
     except:
         raise HTTPException(status_code=404, detail="Instructions not found")
+

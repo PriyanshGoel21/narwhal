@@ -91,3 +91,5 @@ async def fetch_one(search_string: str = Query(..., description="Company name"))
         raise HTTPException(
             status_code=404, detail="Product not found"
         )
+
+
