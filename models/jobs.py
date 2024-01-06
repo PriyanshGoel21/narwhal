@@ -1,9 +1,12 @@
-from typing import List, Optional, Union, Any
-from beanie import Document, Link
-from models.product import Product
+from datetime import datetime
 from enum import Enum
-import datetime
+from typing import List, Optional
+
+from beanie import Document, Link
 from pydantic import Field
+
+from models.product import Product
+
 
 class Status(str, Enum):
     in_progress = "in_progress"
@@ -25,7 +28,7 @@ class CompletionStatus(str, Enum):
 class Job(Document):
     pms_code: str
     pms_desc: str
-    due_date: str | Any
+    due_date: datetime
     status: Status
     products: Optional[List[Link[Product]]]
     type: Type
@@ -34,8 +37,8 @@ class Job(Document):
 class CompletedJob(Document):
     pms_code: str
     pms_desc: str
-    due_date: datetime.date
-    completed_date: datetime.date = Field(default_factory=datetime.date)
+    due_date: datetime
+    completed_date: datetime = Field(default_factory=datetime.now)
     products: Optional[List[Link[Product]]]
     type: Type
     completion_status: CompletionStatus
