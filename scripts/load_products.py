@@ -13,6 +13,7 @@ from models.product import Product
 async def main():
     # Beanie uses Motor async client under the hood
     client = AsyncIOMotorClient("mongodb://narwhal:narwhal123@159.89.204.17:27017")
+    # client = AsyncIOMotorClient("mongodb://localhost:27017/")
 
     await init_beanie(database=client.narwhal, document_models=[Product, Job, Box])
     products = {}

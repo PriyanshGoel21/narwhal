@@ -43,6 +43,24 @@ async def change_status(pms_code: str, status: Status = Query(None, title="Statu
                 # being assigned
 
         return await job.save()
+
     except:
         raise HTTPException(status_code=404, detail="Job not found")
 
+
+@router.get("jobs/{pms_code}/drawings")
+async def get_drawings(pms_code: str):
+    try:
+        return "Feature work in progress"
+
+    except:
+        raise HTTPException(status_code=404, detail="Drawing not found")
+
+
+@router.get("jobs/{pms_code}/instructions")
+async def get_drawings(pms_code: str):
+    try:
+        return "Feature work in progress"
+
+    except:
+        raise HTTPException(status_code=404, detail="Instructions not found")

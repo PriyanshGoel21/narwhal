@@ -1,11 +1,10 @@
 from typing import List
-
 from beanie import WriteRules
+from beanie.odm.operators.find.evaluation import RegEx
+from beanie.odm.operators.find.logical import Or
 from fastapi import APIRouter, Body, HTTPException, Query
-
 from models.box import Box, CreateBox
 from models.product import Product
-
 router = APIRouter()
 
 
@@ -76,3 +75,19 @@ async def update_rob(product_id: str, new_rob: int) -> Product:
         await exists.save()
         return exists
     raise HTTPException(status_code=404, detail="Product not found")
+
+
+@router.get("/search_product")
+async def fetch_one(search_string: str = Query(..., description="Company name")) -> list[Product]:
+    product = await Product.find(
+        Or(
+            RegEx(Product.material_code, search_string, "i"),
+            RegEx(Product.material_desc, search_string, "i"),
+        )
+    ).to_list()
+    if product:
+        return product[:10]
+    else:
+        raise HTTPException(
+            status_code=404, detail="Product not found"
+        )
